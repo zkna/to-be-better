@@ -1,0 +1,32 @@
+spring:
+  cloud:
+    stream:
+      function:
+        definition: receiveKafkaAvro;
+
+      # bindings são os tópicos e filas de destino ou consumo.
+      # É possível configurar algumas propriedades dos bindings de forma independete.
+      #Obs: Não é possível configurar a serialização/deserialização nos bindings, só no binders.
+      bindings:
+        receiveKafkaAvro-in-0:
+          binder: kafka_avro_consumer
+          destination: customer-topic-avro
+          contentType: application/*+avro
+          useNativeEncoding: true
+
+      # Bindes são as opçoes de ferramentas de envio de mensagens/streams. Ex: Kafka e RabbitMQ.
+      # É possível personalizar as configurações de cada binder de forma independente.
+      binders:
+        kafka_avro_consumer:
+          type: kafka
+          environment:
+            spring:
+              cloud:
+                stream:
+                  kafka:
+                    binder:
+                      consumer-properties:
+#                        value.deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+#                        schema.registry.url: http://localhost:8085
+                        specific.avro.reader: true
+                      brokers: http://localhost:9092
