@@ -1,6 +1,6 @@
 spring:
   application:
-    name: data-fund-collect
+    name: data-handler
   cloud:
     nacos:
       config:

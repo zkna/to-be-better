@@ -1,5 +1,6 @@
 package com.gyx.datafundcollect;
 
+import com.gyx.datafundcollect.service.IFundArchives;
 import com.gyx.datafundcollect.service.IFundCompany;
 import com.ruiyun.jvppeteer.core.Puppeteer;
 import com.ruiyun.jvppeteer.core.browser.Browser;
@@ -17,13 +18,21 @@ class DataFundCollectApplicationTests {
     @Autowired
     IFundCompany iFundCompany;
 
+    @Autowired
+    IFundArchives iFundArchives;
+
     @Test
     void crawlCompanyOverview() throws IOException, InterruptedException {
         iFundCompany.crawlCompanyOverview();
     }
     @Test
     void crawlFundCompany() throws IOException, InterruptedException {
-        iFundCompany.crawlFundCompany();
+        iFundCompany.crawlCompanyList();
+    }
+    @Test
+    void crawlFundArchives() throws IOException, InterruptedException, ExecutionException {
+//        iFundArchives.crawlFundList("https://fund.eastmoney.com//Company/80672691.html");
+//        iFundArchives.crawlFundArchives("502003","http://fundf10.eastmoney.com/jjjz_502003.html","开放式基金");
     }
 
     @Test

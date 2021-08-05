@@ -1,105 +1,52 @@
 package com.gyx.entity.fund;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
 
+/**
+ * @author gyx
+ */
 @Data
-public class FundArchives {
-    /**
-     * 基金大类
-     */
+public class FundArchives extends BaseEntity{
+
+    @ApiModelProperty(value = "爬取时间")
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
+    private Date crawlDateTime;
+
+    @ApiModelProperty(value = "基金大类")
     private String fundConcept;
 
-    /**
-     * 基金代码
-     */
+    @ApiModelProperty(value = "基金代码")
     private String fundCode;
 
-    /**
-     * 基金名称
-     */
-    private String fundName;
+    @ApiModelProperty(value = "净值日期")
+    @JSONField(format = "yyyy-MM-dd")
+    private String netDateTime;
 
-    /**
-     * 基金地址
-     */
-    private String fundUrl;
+    @ApiModelProperty(value = "单位净值")
+    private String unitNet;
 
-    /**
-     * 基金 吧
-     */
-    private String fundBaUrl;
+    @ApiModelProperty(value = "累计净值")
+    private String accumulatedNet;
 
-    /**
-     * 基金档案
-     */
-    private String fundArchiveUrl;
+    @ApiModelProperty(value = "日增长率")
+    private String dayGrowRate;
 
-    /**
-     * 基金类型
-     */
-    private String fundType;
-
-    /**
-     * 基金日期
-     */
-    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
-    private Date fundDate;
-
-    /**
-     * 单位净值/万份收益
-     */
-    private String netVal;
-
-    /**
-     * 累计净值
-     */
-    private String accumulatedNetVal;
-
-    /**
-     * 日增长率/7日年化
-     */
-    private String dailyGrowthRate;
-
-    /**
-     * 规模（亿元）
-     */
-    private String fundScale;
-
-    /**
-     * 基金经理
-     */
-    private String fundManager;
-
-    /**
-     * 基金经理地址
-     */
-    private String fundManagerUrl;
-
-    /**
-     * 申购状态
-     */
+    @ApiModelProperty(value = "申购状态")
     private String subscriptionStatus;
 
-    /**
-     * 手续费
-     */
-    private String handFee;
+    @ApiModelProperty(value = "赎回状态")
+    private String redemptionStatus;
 
-    /**
-     * 购买状态
-     */
-    private String purchase;
+    @ApiModelProperty(value = "分红配送")
+    private String dividendDistribution;
 
-    /**
-     * 市价
-     */
-    private String marketVal;
+    @ApiModelProperty(value = "每万份收益")
+    private String perMillionFund;
 
-    /**
-     * 折价率
-     */
-    private String hairCut;
+    @ApiModelProperty(value = "7日年化收益率（%）")
+    private String annualized7Income;
 }

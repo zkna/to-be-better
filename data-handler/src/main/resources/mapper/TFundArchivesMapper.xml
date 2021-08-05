@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gyx.datahandler.mapper.TFundArchivesMapper">
+
+    <insert id="insertBatch" parameterType="com.gyx.datahandler.entity.TFundArchives">
+        INSERT INTO t_fund_archives
+        (id, crawl_date_time, fund_concept, fund_code, net_date_time, unit_net, accumulated_net, day_grow_rate, subscription_status, redemption_status, dividend_distribution, per_million_fund, annualized7_income, create_date_time)
+        VALUES
+        <foreach collection="archives" item="item" index="index" separator=",">
+            (#{item.id}, #{item.crawlDateTime}, #{item.fundConcept}, #{item.fundCode}, #{item.netDateTime}, #{item.unitNet}, #{item.accumulatedNet},
+             #{item.dayGrowRate}, #{item.subscriptionStatus}, #{item.redemptionStatus}, #{item.dividendDistribution}, #{item.perMillionFund},
+             #{item.annualized7Income}, #{item.createDateTime})
+        </foreach>
+    </insert>
+</mapper>

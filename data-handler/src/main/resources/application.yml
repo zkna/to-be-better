@@ -1,23 +1,45 @@
 spring:
   cloud:
+    nacos:
+      config:
+        server-addr: localhost:8848
+        file-extension: yaml
+      discovery:
+        server-addr: localhost:8848
     stream:
+      kafka:
+        binder:
+          autoAddPartitions: true
       function:
-        definition: receiveKafkaAvro;
-
-      # bindings são os tópicos e filas de destino ou consumo.
-      # É possível configurar algumas propriedades dos bindings de forma independete.
-      #Obs: Não é possível configurar a serialização/deserialização nos bindings, só no binders.
+        definition: receiveCompanyOverview;receiveCompanyList;receiveFundList;receiveFundArchives;
+      #绑定是目标或消费主题和队列。 你可以独立配置绑定的一些属性。
+      #注意：不可能在绑定中配置序列化/反序列化，只能在绑定器中配置。
       bindings:
-        receiveKafkaAvro-in-0:
-          binder: kafka_avro_consumer
-          destination: customer-topic-avro
+        receiveCompanyOverview-in-0:
+          binder: company-overview
+          destination: topic-company-overview
           contentType: application/*+avro
           useNativeEncoding: true
-
-      # Bindes são as opçoes de ferramentas de envio de mensagens/streams. Ex: Kafka e RabbitMQ.
-      # É possível personalizar as configurações de cada binder de forma independente.
+        receiveCompanyList-in-0:
+          binder: company-list
+          destination: topic-company-list
+          contentType: application/*+avro
+          useNativeEncoding: true
+        receiveFundList-in-0:
+          binder: fund-list
+          destination: topic-fund-list
+          contentType: application/*+avro
+          useNativeEncoding: true
+        receiveFundArchives-in-0:
+          binder: fund-archives
+          destination: topic-fund-archives
+          contentType: application/*+avro
+          useNativeEncoding: true
+          consumer:
+            concurrency: 15
+      #      绑定是发送消息/流的工具选项。例如：Kafka和RabbitMQ。你可以独立定制每个活页夹的设置。
       binders:
-        kafka_avro_consumer:
+        company-overview:
           type: kafka
           environment:
             spring:
@@ -25,8 +47,67 @@ spring:
                 stream:
                   kafka:
                     binder:
+                      brokers: http://192.168.33.40:9092
                       consumer-properties:
-#                        value.deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
-#                        schema.registry.url: http://localhost:8085
                         specific.avro.reader: true
-                      brokers: http://localhost:9092
+        company-list:
+          type: kafka
+          environment:
+            spring:
+              cloud:
+                stream:
+                  kafka:
+                    binder:
+                      brokers: http://192.168.33.40:9092
+                    consumer-properties:
+                      specific.avro.reader: true
+        fund-list:
+          type: kafka
+          environment:
+            spring:
+              cloud:
+                stream:
+                  kafka:
+                    binder:
+                      brokers: http://192.168.33.40:9092
+                    consumer-properties:
+                      specific.avro.reader: true
+        fund-archives:
+          type: kafka
+          environment:
+            spring:
+              cloud:
+                stream:
+                  kafka:
+                    binder:
+                      brokers: http://192.168.33.40:9092
+                    consumer-properties:
+                      specific.avro.reader: true
+  datasource:
+    druid:
+      stat-view-servlet:
+        enabled: true
+        loginUsername: admin
+        loginPassword: 123456
+    dynamic:
+      p6spy: true
+      druid:
+        initial-size: 2
+        max-active: 100
+      datasource:
+        mfund:
+          url: jdbc:mysql://localhost:3306/fund
+          username: root
+          password: jk
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          druid:
+            initial-size: 20
+            validation-query: select 1
+        cfund:
+          url: jdbc:clickhouse://192.168.33.40:8123/fund
+          username: default
+          password: jk
+          driver-class-name: ru.yandex.clickhouse.ClickHouseDriver
+      primary: fund
+server:
+  port: 8700

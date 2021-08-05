@@ -1,26 +1,15 @@
 package com.gyx.datahandler.entity;
 
-import java.util.Date;
-import java.io.Serializable;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.gyx.entity.fund.CompanyOverview;
+import com.gyx.entity.fund.FundList;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
-/**
- * <p>
- * 
- * </p>
- *
- * @author zkna
- * @since 2021-07-14
- */
+import java.util.Date;
+
 @Data
-@EqualsAndHashCode(callSuper = false)
-public class TCompanyOverview extends CompanyOverview {
+public class TFundList extends FundList {
 
     @ApiModelProperty(value = "主键id")
     @TableId(type = IdType.AUTO,value = "id")
