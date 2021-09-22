@@ -1,0 +1,24 @@
+server:
+  port: 8705
+spring:
+  datasource:
+    dynamic:
+      p6spy: true
+      druid:
+        initial-size: 2
+        max-active: 100
+      datasource:
+        mfund:
+          url: jdbc:mysql://localhost:3306/fund
+          username: root
+          password: jk
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          druid:
+            initial-size: 20
+            validation-query: select 1
+        cfund:
+          url: jdbc:clickhouse://192.168.33.50:8123/fund
+          username: default
+          password: jk
+          driver-class-name: ru.yandex.clickhouse.ClickHouseDriver
+      primary: fund
