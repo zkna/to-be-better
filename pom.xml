@@ -13,7 +13,6 @@
         <module>data-api</module>
         <module>data-fund-collect</module>
         <module>data-handler</module>
-        <module>data-analysis</module>
     </modules>
 
     <groupId>com.gyx</groupId>
