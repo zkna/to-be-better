@@ -1,0 +1,53 @@
+server:
+  port: ${random.int[5000,5109]}
+spring:
+  application:
+    name: demo-consumer-application
+  cloud:
+    # Spring Cloud Stream 配置项，对应 BindingServiceProperties 类
+    stream:
+      # Binder 配置项，对应 BinderProperties Map
+      #      binders:
+      # Binding 配置项，对应 BindingProperties Map
+      bindings:
+        eastmoney-fund-list-input:
+          destination: eastmoney-fund-list # 目的地。这里使用 Kafka Topic
+          content-type: application/json # 内容格式。这里使用 JSON
+          group: eastmoney-fund-group01
+          consumer:
+#            batch-mode: true
+            concurrency: 3 # 每个 Consumer 消费线程数的初始大小，默认为 1
+#            valueDeserializer: org.apache.kafka.common.serialization.StringDeserializer
+        #            batch-mode: true # 是否批量消费默认，默认为 false
+        eastmoney-company-list-input:
+          destination: eastmoney-company-list # 目的地。这里使用 Kafka Topic
+          content-type: application/json # 内容格式。这里使用 JSON
+          group: eastmoney-company-group01 # 消费者分组
+          consumer:
+            concurrency: 1 # 每个 Consumer 消费线程数的初始大小，默认为 1
+      # Spring Cloud Stream Kafka 配置项
+      kafka:
+        # Kafka Binder 配置项，对应 KafkaBinderConfigurationProperties 类
+        binder:
+          brokers: 192.168.0.200:9092,192.168.0.201:9092,192.168.0.202:9092 # 指定 Kafka Broker 地址，可以设置多个，以逗号分隔
+#          configuration:
+#            fetch.max.wait.ms: 10000 # poll 一次拉取的阻塞的最大时长，单位：毫秒。这里指的是阻塞拉取需要满足至少 fetch-min-size 大小的消息
+#            fetch.min.bytes: 1024 # poll 一次消息拉取的最小数据量，单位：字节
+#            max.poll.records: 100 # poll 一次消息拉取的最大数量
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: fund
+    password: Hundsun!123
+    url: jdbc:mysql://localhost:3306/fund_eastmoney?useSSL=false&useUnicode=true&characterEncoding=utf-8
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*' # 需要开放的端点。默认值只打开 health 和 info 两个端点。通过设置 * ，可以开放所有端点。
+  endpoint:
+    # Health 端点配置项，对应 HealthProperties 配置类
+    health:
+      enabled: true # 是否开启。默认为 true 开启。
+      show-details: ALWAYS # 何时显示完整的健康信息。默认为 NEVER 都不展示。可选 WHEN_AUTHORIZED 当经过授权的用户；可选 ALWAYS 总是展示
+
+
