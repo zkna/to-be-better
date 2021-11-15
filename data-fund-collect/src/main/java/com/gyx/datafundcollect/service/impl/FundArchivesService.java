@@ -1,30 +1,22 @@
 package com.gyx.datafundcollect.service.impl;
 
-import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpRequest;
-import cn.hutool.http.HttpUtil;
-import cn.hutool.http.Method;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.gyx.datafundcollect.entity.trans.Lsjz;
 import com.gyx.datafundcollect.entity.trans.LsjzDataList;
 import com.gyx.datafundcollect.service.IFundArchives;
 import com.gyx.entity.fund.FundArchives;
-import com.gyx.entity.fund.FundList;
-import com.ruiyun.jvppeteer.core.Puppeteer;
+import com.gyx.entity.fund.eastmoney.EastmoneyFundTO;
 import com.ruiyun.jvppeteer.core.browser.Browser;
 import com.ruiyun.jvppeteer.core.page.ElementHandle;
 import com.ruiyun.jvppeteer.core.page.Page;
-import com.ruiyun.jvppeteer.options.LaunchOptions;
-import com.ruiyun.jvppeteer.options.LaunchOptionsBuilder;
-import io.swagger.models.auth.In;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -70,7 +62,7 @@ public class FundArchivesService implements IFundArchives {
             List<ElementHandle> trs = div.$$("table > tbody > tr");
             if ("开放式基金".equals(h3)) {
                 for (ElementHandle tr : trs) {
-                    FundList fl = new FundList();
+                    EastmoneyFundTO fl = new EastmoneyFundTO();
                     fl.setFundConcept(h3);
                     String content = StrUtil.trim(tr.$eval("td", "v => v.textContent", new ArrayList()).toString());
                     if ("暂无数据".equals(content)) {
@@ -82,14 +74,14 @@ public class FundArchivesService implements IFundArchives {
                     fl.setFundArchiveUrl(StrUtil.trim(tr.$eval("td:nth-child(2) > a:nth-child(2)", "v => v.attributes['href'].nodeValue", new ArrayList()).toString()));
                     fl.setFundType(StrUtil.trim(tr.$eval("td:nth-child(3)", "v => v.textContent", new ArrayList()).toString()));
                     //                fa.setFundDate(Date(StrUtil.trim(tr.$eval("td:nth-child(4)","v => v.textContent",new ArrayList()).toString())));
-                    fl.setNetVal(StrUtil.trim(tr.$eval("td:nth-child(5)", "v => v.textContent", new ArrayList()).toString()));
-                    fl.setAccumulatedNetVal(StrUtil.trim(tr.$eval("td:nth-child(6)", "v => v.textContent", new ArrayList()).toString()));
-                    fl.setDailyGrowthRate(StrUtil.trim(tr.$eval("td:nth-child(7)", "v => v.textContent", new ArrayList()).toString()));
+                    fl.setFundNetVal(StrUtil.trim(tr.$eval("td:nth-child(5)", "v => v.textContent", new ArrayList()).toString()));
+                    fl.setFundAccumulatedNetVal(StrUtil.trim(tr.$eval("td:nth-child(6)", "v => v.textContent", new ArrayList()).toString()));
+                    fl.setFundDailyGrowthRate(StrUtil.trim(tr.$eval("td:nth-child(7)", "v => v.textContent", new ArrayList()).toString()));
                     fl.setFundScale(StrUtil.trim(tr.$eval("td:nth-child(10)", "v => v.textContent", new ArrayList()).toString()));
                     fl.setFundManager(StrUtil.trim(tr.$eval("td:nth-child(11)", "v => v.textContent", new ArrayList()).toString()));
                     //                fa.setFundManagerUrl(StrUtil.trim(tr.$eval("td:nth-child(11)","v => v.attributes['href'].nodeValue",new ArrayList()).toString()));
-                    fl.setSubscriptionStatus(StrUtil.trim(tr.$eval("td:nth-child(12)", "v => v.textContent", new ArrayList()).toString()));
-                    fl.setHandFee(StrUtil.trim(tr.$eval("td:nth-child(13)", "v => v.textContent", new ArrayList()).toString()));
+                    fl.setFundSubscriptionStatus(StrUtil.trim(tr.$eval("td:nth-child(12)", "v => v.textContent", new ArrayList()).toString()));
+                    fl.setFundHandFee(StrUtil.trim(tr.$eval("td:nth-child(13)", "v => v.textContent", new ArrayList()).toString()));
                     //                fa.purchase =StrUtil.trim(tr.$eval("td:nth-child(14)","v => v.attributes['title'].nodeValue",new ArrayList()).toString())
 //                    log.info(JSON.toJSONString(fa));
                     fl.setCrawlDateTime(new Date());
@@ -98,7 +90,7 @@ public class FundArchivesService implements IFundArchives {
                 }
             } else if ("货币/理财型基金".equals(h3)) {
                 for (ElementHandle tr : trs) {
-                    FundList fl = new FundList();
+                    EastmoneyFundTO fl = new EastmoneyFundTO();
                     fl.setFundConcept(h3);
                     String content = StrUtil.trim(tr.$eval("td", "v => v.textContent", new ArrayList()).toString());
                     if ("暂无数据".equals(content)) {
@@ -111,13 +103,13 @@ public class FundArchivesService implements IFundArchives {
                     fl.setFundType(StrUtil.trim(tr.$eval("td:nth-child(3)", "v => v.textContent", new ArrayList()).toString()));
                     //                fa.setFundDate(ate(StrUtil.trim(tr.$eval("td:nth-child(4)","v => v.textContent",new ArrayList()).toString())));
                     //万分收益
-                    fl.setNetVal(StrUtil.trim(tr.$eval("td:nth-child(5)", "v => v.textContent", new ArrayList()).toString()));
-                    fl.setDailyGrowthRate(StrUtil.trim(tr.$eval("td:nth-child(6)", "v => v.textContent", new ArrayList()).toString()));
+                    fl.setFundNetVal(StrUtil.trim(tr.$eval("td:nth-child(5)", "v => v.textContent", new ArrayList()).toString()));
+                    fl.setFundDailyGrowthRate(StrUtil.trim(tr.$eval("td:nth-child(6)", "v => v.textContent", new ArrayList()).toString()));
                     fl.setFundScale(StrUtil.trim(tr.$eval("td:nth-child(10)", "v => v.textContent", new ArrayList()).toString()));
                     fl.setFundManager(StrUtil.trim(tr.$eval("td:nth-child(11)", "v => v.textContent", new ArrayList()).toString()));
                     //                fa.setFundManagerUrl(r.$eval("td:nth-child(11)","v => v.attributes['href'].nodeValue",new ArrayList()).toString());
-                    fl.setSubscriptionStatus(StrUtil.trim(tr.$eval("td:nth-child(12)", "v => v.textContent", new ArrayList()).toString()));
-                    fl.setHandFee(StrUtil.trim(tr.$eval("td:nth-child(13)", "v => v.textContent", new ArrayList()).toString()));
+                    fl.setFundSubscriptionStatus(StrUtil.trim(tr.$eval("td:nth-child(12)", "v => v.textContent", new ArrayList()).toString()));
+                    fl.setFundHandFee(StrUtil.trim(tr.$eval("td:nth-child(13)", "v => v.textContent", new ArrayList()).toString()));
                     //                fa.setPurchase($eval("td:nth-child(14)","v => v.attributes['title'].nodeValue",new ArrayList()).toString());
 //                    log.info(JSON.toJSONString(fa));
                     fl.setCrawlDateTime(new Date());
@@ -126,7 +118,7 @@ public class FundArchivesService implements IFundArchives {
                 }
             } else if ("场内基金".equals(h3)) {
                 for (ElementHandle tr : trs) {
-                    FundList fl = new FundList();
+                    EastmoneyFundTO fl = new EastmoneyFundTO();
                     fl.setFundConcept(h3);
                     String content = StrUtil.trim(tr.$eval("td", "v => v.textContent", new ArrayList()).toString());
                     if ("暂无数据".equals(content)) {
@@ -138,11 +130,11 @@ public class FundArchivesService implements IFundArchives {
                     fl.setFundArchiveUrl(StrUtil.trim(tr.$eval("td:nth-child(2) > a:nth-child(2)", "v => v.attributes['href'].nodeValue", new ArrayList()).toString()));
                     fl.setFundType(StrUtil.trim(tr.$eval("td:nth-child(3)", "v => v.textContent", new ArrayList()).toString()));
                     //                fl.setFundDate(Date(StrUtil.trim(tr.$eval("td:nth-child(4)","v => v.textContent",new ArrayList()).toString())));
-                    fl.setNetVal(StrUtil.trim(tr.$eval("td:nth-child(5)", "v => v.textContent", new ArrayList()).toString()));
-                    fl.setAccumulatedNetVal(StrUtil.trim(tr.$eval("td:nth-child(6)", "v => v.textContent", new ArrayList()).toString()));
-                    fl.setDailyGrowthRate(StrUtil.trim(tr.$eval("td:nth-child(7)", "v => v.textContent", new ArrayList()).toString()));
-                    fl.setMarketVal(StrUtil.trim(tr.$eval("td:nth-child(8)", "v => v.textContent", new ArrayList()).toString()));
-                    fl.setHairCut(StrUtil.trim(tr.$eval("td:nth-child(9)", "v => v.textContent", new ArrayList()).toString()));
+                    fl.setFundNetVal(StrUtil.trim(tr.$eval("td:nth-child(5)", "v => v.textContent", new ArrayList()).toString()));
+                    fl.setFundAccumulatedNetVal(StrUtil.trim(tr.$eval("td:nth-child(6)", "v => v.textContent", new ArrayList()).toString()));
+                    fl.setFundDailyGrowthRate(StrUtil.trim(tr.$eval("td:nth-child(7)", "v => v.textContent", new ArrayList()).toString()));
+                    fl.setFundMarketVal(StrUtil.trim(tr.$eval("td:nth-child(8)", "v => v.textContent", new ArrayList()).toString()));
+                    fl.setFundHairCut(StrUtil.trim(tr.$eval("td:nth-child(9)", "v => v.textContent", new ArrayList()).toString()));
                     fl.setFundScale(StrUtil.trim(tr.$eval("td:nth-child(10)", "v => v.textContent", new ArrayList()).toString()));
                     fl.setFundManager(StrUtil.trim(tr.$eval("td:nth-child(11)", "v => v.textContent", new ArrayList()).toString()));
                     //                fl.fundManagerUrl = StrUtil.trim(tr.$eval("td:nth-child(11)","v => v.attributes['href'].nodeValue",new ArrayList()).toString())
@@ -291,7 +283,7 @@ public class FundArchivesService implements IFundArchives {
         return ls;
     }
 
-    public void sendFundList(CountDownLatch cdl, Browser browser, FundList fl) {
+    public void sendFundList(CountDownLatch cdl, Browser browser, EastmoneyFundTO fl) {
 //        log.warn(JSON.toJSONString(fl));
         try {
             streamBridge.send(PRODUCE_FUND_LIST, fl);

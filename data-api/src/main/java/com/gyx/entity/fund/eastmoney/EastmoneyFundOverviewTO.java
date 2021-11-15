@@ -1,7 +1,7 @@
-package com.gyx.entity.fund;
+package com.gyx.entity.fund.eastmoney;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import io.swagger.annotations.ApiModelProperty;
+import com.gyx.entity.fund.BaseCrawlEntity;
 import lombok.Data;
 
 import java.util.Date;
@@ -11,7 +11,7 @@ import java.util.Date;
  * @author gyx
  */
 @Data
-public class CompanyOverview extends BaseCrawlEntity {
+public class EastmoneyFundOverviewTO extends BaseCrawlEntity {
 
     /**
      * 全部基金管理规模（亿元）
@@ -86,6 +86,7 @@ public class CompanyOverview extends BaseCrawlEntity {
     /**
      * 截止日期
      */
+    @JSONField(format = "yyyy-MM-dd")
     private Date expiryDate;
 
     /**

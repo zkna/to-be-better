@@ -1,6 +1,6 @@
 package com.gyx.datahandler.service;
 
-import com.gyx.datahandler.entity.TCompanyOverview;
+import com.gyx.datahandler.entity.TEastmoneyFundOverviewTO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author zkna
  * @since 2021-07-14
  */
-public interface ITCompanyOverviewService extends IService<TCompanyOverview> {
+public interface ITCompanyOverviewService extends IService<TEastmoneyFundOverviewTO> {
 
 }

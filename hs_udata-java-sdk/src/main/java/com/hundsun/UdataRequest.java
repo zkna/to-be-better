@@ -1,6 +1,10 @@
 package com.hundsun;
 
+import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONPath;
+import com.alibaba.fastjson.parser.Feature;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -96,6 +100,8 @@ public class UdataRequest {
         HTTP_CLIENT.executeMethod(getMethod);
 
         InputStream inputStream = getMethod.getResponseBodyAsStream();
+//        JSONObject.parseObject(inputStream, Feature.OrderedField);
+//        JSON
         String result = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
 
         getMethod.releaseConnection();
@@ -104,12 +110,17 @@ public class UdataRequest {
 
 
     public static void main(String[] args) throws IOException {
-        String url = "https://udata.hs.net/udata/business/v1/app_services/basic_data/stock_list";
-        String appToken = "***";
-        Map<String, Object> mapParam = new HashMap<>(12);
-        mapParam.put("fields","secu_abbr");
-        String resultGet = UdataRequest.sendGet(appToken, url, mapParam);
-        String resultPost = UdataRequest.sendPost(appToken, url, mapParam);
+        String url = "https://udata.hs.net/udata/business/v1/app_services/fund_basic_data/fund_list";
+        String appToken = "38C63VPxEfKpKzGFyg8ssu_92thOn8jz97joD9lYmMuguc5h3uzQpWeMS3cHYMN4";
+
+
+        String result = HttpRequest.get(url).header("Application-Token",appToken).header("Content-Type", "application/json")
+                .charset("utf-8").form("fields","secu_abbr").execute().body();
+        System.out.println(result);
+//        String resultPost = UdataRequest.sendPost(appToken, url, mapParam);
+
+//        System.out.println(resultPost);
+//        JSONObject.parseObject();
     }
 
 }

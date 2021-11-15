@@ -12,7 +12,10 @@ import java.util.Date;
  * @author gyx
  */
 @Data
-public class EastmoneyFundListTO extends BaseCrawlEntity {
+public class EastmoneyFundTO extends BaseCrawlEntity {
+
+    public EastmoneyFundTO() {
+    }
 
     /**
      * 基金大类
@@ -47,12 +50,12 @@ public class EastmoneyFundListTO extends BaseCrawlEntity {
     /**
      * 基金吧
      */
-    private String fundBaUrl;
+    private String fundBa;
 
     /**
      * 基金档案
      */
-    private String fundArchiveUrl;
+    private String fundArchive;
 
     /**
      * 基金类型
@@ -119,5 +122,7 @@ public class EastmoneyFundListTO extends BaseCrawlEntity {
      * 折价率
      */
     private String fundHairCut;
+
+
 
 }

@@ -2,14 +2,14 @@ package com.gyx.datahandler.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.gyx.entity.fund.eastmoney.EastmoneyFundListTO;
+import com.gyx.entity.fund.eastmoney.EastmoneyFundTO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
-public class TEastmoneyFundListTO extends EastmoneyFundListTO {
+public class TEastmoneyFundTO extends EastmoneyFundTO {
 
     @ApiModelProperty(value = "主键id")
     @TableId(type = IdType.AUTO,value = "id")

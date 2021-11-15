@@ -1,38 +1,35 @@
-package com.zkna.tofundcollect;
+package com.zkna.fund.tofundcollect;
 
 import com.ruiyun.jvppeteer.core.Puppeteer;
 import com.ruiyun.jvppeteer.core.browser.Browser;
 import com.ruiyun.jvppeteer.core.browser.BrowserFetcher;
-import com.ruiyun.jvppeteer.options.LaunchOptions;
-import com.ruiyun.jvppeteer.options.LaunchOptionsBuilder;
-import com.zkna.tofundcollect.crawl.FundCompanyCrawl;
+import com.zkna.fund.tofundcollect.crawl.eastmoney.EastmoneyCompanyCrawl;
+import com.zkna.fund.tofundcollect.crawl.eastmoney.EastmoneyFundCrawl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @SpringBootTest(classes = ToFundCollectApplication.class)
 class ToFundCollectApplicationTests {
 
+    @Autowired
+    EastmoneyCompanyCrawl eastmoneyCompanyCrawl;
 
     @Autowired
-    FundCompanyCrawl fundCompanyCrawl;
+    EastmoneyFundCrawl eastmoneyFundCrawl;
 
     @Test
     void contextLoads() throws IOException, ParseException, InterruptedException {
-        fundCompanyCrawl.crawlCompanyOverview();
+        eastmoneyCompanyCrawl.crawlCompanyOverview();
     }
 
     @Test
-    void crawlCompanyList() throws IOException, ParseException, InterruptedException {
-        fundCompanyCrawl.crawlCompanyList();
+    void crawlCompanyList() throws Exception {
+        eastmoneyCompanyCrawl.crawlCompanyList();
     }
 
     @Test

@@ -12,12 +12,12 @@ import java.util.Date;
  * @author gyx
  */
 @Data
-public class EastmoneyCompanyListTO extends BaseCrawlEntity {
+public class EastmoneyCompanyTO extends BaseCrawlEntity {
 
     /**
      * 公司ID
      */
-    private String companyId;
+    private String companyCode;
 
     /**
      * 公司名称
@@ -48,7 +48,7 @@ public class EastmoneyCompanyListTO extends BaseCrawlEntity {
     /**
      * 全部管理规模（亿元）
      */
-    private BigDecimal companyScaleSum;
+    private BigDecimal companyScale;
 
     /**
      * 规模记录日期

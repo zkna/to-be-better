@@ -18,7 +18,10 @@ public class FundConstant {
 
     public final static String COMPANYLIST = "https://fund.eastmoney.com/company/default.html";
 
-    public final static String COMPANY_DETAIL = "https://fund.eastmoney.com/{}";
+    /**
+     * 天天基金主页
+     */
+    public final static String COMPANY_DETAIL = "https://fund.eastmoney.com";
 
     public final static String HISTORY_ARCHIVE = "https://fundf10.eastmoney.com/jjjz_{}.html";
 }

@@ -1,2 +1,4 @@
-package com.gyx.entity.constant;public class FundConstant {
+package com.gyx.entity.constant;
+
+public class FundConstant {
 }

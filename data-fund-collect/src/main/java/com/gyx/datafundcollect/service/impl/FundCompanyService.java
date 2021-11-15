@@ -6,8 +6,8 @@ import com.alibaba.fastjson.JSON;
 import com.gyx.datafundcollect.service.IFundArchives;
 import com.gyx.datafundcollect.service.IFundCompany;
 import com.gyx.entity.common.FundConstant;
-import com.gyx.entity.fund.CompanyList;
-import com.gyx.entity.fund.CompanyOverview;
+import com.gyx.entity.fund.eastmoney.EastmoneyCompanyTO;
+import com.gyx.entity.fund.eastmoney.EastmoneyFundOverviewTO;
 import com.ruiyun.jvppeteer.core.Puppeteer;
 import com.ruiyun.jvppeteer.core.browser.Browser;
 import com.ruiyun.jvppeteer.core.page.ElementHandle;
@@ -17,6 +17,7 @@ import com.ruiyun.jvppeteer.options.LaunchOptionsBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 
@@ -47,7 +48,8 @@ public class FundCompanyService implements IFundCompany {
      * @throws InterruptedException
      */
     @Override
-    public CompanyOverview crawlCompanyOverview() throws IOException, InterruptedException {
+    @StreamListener
+    public EastmoneyFundOverviewTO crawlCompanyOverview() throws IOException, InterruptedException {
         List<String> argList = new ArrayList<>();
         argList.add("--no-sandbox");
         argList.add("--disable-setuid-sandbox");
@@ -57,7 +59,7 @@ public class FundCompanyService implements IFundCompany {
         page.goTo(FundConstant.COMPANYOVERVIEW);
         List<ElementHandle> ehs = page.$$("body > div.outer_all > div.ttjj-grid-row > div.main-content.ttjj-grid-21 > div.third-block.jcommon-block > div.common-block-con > table > tbody");
         ElementHandle e2 = ehs.get(0).$$("tr:nth-child(2)").get(0);
-        CompanyOverview co = new CompanyOverview();
+        EastmoneyFundOverviewTO co = new EastmoneyFundOverviewTO();
         var fundCompanys = StrUtil.trim(page.$eval("body > div.outer_all > div.ttjj-grid-row > div.main-content.ttjj-grid-21 > div.third-block.jcommon-block > div.common-sub-title.clearfix > div.pull-left > p",
                 "p => p.textContent", new ArrayList()).toString());
         Matcher mat = pat1.matcher(fundCompanys);
@@ -86,7 +88,7 @@ public class FundCompanyService implements IFundCompany {
         co.setCrawlDateTime(new Date());
         browser.close();
         log.info("Message<PRODUCE_COMPANY_OVERVIEW> = {}", JSON.toJSONString(co));
-        streamBridge.send(PRODUCE_COMPANY_OVERVIEW, co);
+//        streamBridge.send(PRODUCE_COMPANY_OVERVIEW, co);
         return co;
     }
 
@@ -97,7 +99,7 @@ public class FundCompanyService implements IFundCompany {
      * @throws InterruptedException
      */
     @Override
-    public List<CompanyList> crawlCompanyList() throws IOException, InterruptedException {
+    public List<EastmoneyCompanyTO> crawlCompanyList() throws IOException, InterruptedException {
         List<String> argList = new ArrayList<String>();
         argList.add("--no-sandbox");
         argList.add("--disable-setuid-sandbox");
@@ -105,31 +107,31 @@ public class FundCompanyService implements IFundCompany {
         Browser browser = Puppeteer.launch(options);
         Page page = browser.newPage();
         page.goTo(FundConstant.COMPANYLIST);
-        List<CompanyList> cls = new ArrayList<CompanyList>();
-        CompanyList cl = new CompanyList();
+        List<EastmoneyCompanyTO> cls = new ArrayList<EastmoneyCompanyTO>();
+        EastmoneyCompanyTO cl = new EastmoneyCompanyTO();
         List<ElementHandle> trs = page.$$("#gspmTbl > tbody > tr");
         for (ElementHandle td : trs){
-            cl = new CompanyList();
+            cl = new EastmoneyCompanyTO();
             cl.setCompanyId(StrUtil.trim(td.$eval("td.td-align-left","v => v.attributes['data-sortvalue'].nodeValue", new ArrayList()).toString()));
             cl.setCompanyName(StrUtil.trim(td.$eval("td.td-align-left > a","v => v.textContent", new ArrayList()).toString()));
             cl.setCompanyDetail(StrUtil.trim(td.$eval("td.menu-link > a:nth-child(1)","v => v.attributes['href'].nodeValue", new ArrayList()).toString()));
             cl.setCompanyBa(StrUtil.trim(td.$eval("td.menu-link > a:nth-child(2)","v => v.attributes['href'].nodeValue", new ArrayList()).toString()));
             cl.setCompanySetDate(DateUtil.parse(StrUtil.trim(td.$eval("td:nth-child(4)","v => v.textContent", new ArrayList()).toString()),"yyyy-MM-dd"));
-            cl.setCompanyTianXiang(StrUtil.trim(td.$eval("td.td-pj > div","v => v.textContent", new ArrayList()).toString()));
-            if ("暂无评级".equals(cl.getCompanyTianXiang())){
-                cl.setCompanyTianXiang("0");
+            cl.setCompanyTianXiangLevel(StrUtil.trim(td.$eval("td.td-pj > div","v => v.textContent", new ArrayList()).toString()));
+            if ("暂无评级".equals(cl.getCompanyTianXiangLevel())){
+                cl.setCompanyTianXiangLevel("0");
             }else{
                 Integer t1 = td.$$("td.td-pj > div > label.sprite-star1").size();
                 Integer t5 = td.$$("td.td-pj > div > label.sprite-star5").size();;
-                cl.setCompanyTianXiang(String.valueOf(t1+t5));
+                cl.setCompanyTianXiangLevel(String.valueOf(t1+t5));
             }
-            cl.setScaleDate(StrUtil.trim(td.$eval("td.scale.number > p > span","v => v.textContent", new ArrayList()).toString()));
-            if (StrUtil.isNotBlank(cl.getScaleDate())){
-                cl.setScaleNumber(new BigDecimal(StrUtil.trim(td.$eval("td.scale.number > p","v => v.textContent",new ArrayList()).toString().replace(cl.getScaleDate(),"").replace(StrUtil.COMMA,""))));
+            cl.setCompanyScaleDate(StrUtil.trim(td.$eval("td.scale.number > p > span","v => v.textContent", new ArrayList()).toString()));
+            if (StrUtil.isNotBlank(cl.getCompanyScaleDate())){
+                cl.setCompanyScaleSum(new BigDecimal(StrUtil.trim(td.$eval("td.scale.number > p","v => v.textContent",new ArrayList()).toString().replace(cl.getCompanyScaleDate(),"").replace(StrUtil.COMMA,""))));
             }
-            cl.setFundNums(Integer.valueOf(StrUtil.trim(td.$eval("td:nth-child(7) > a","v => v.textContent", new ArrayList()).toString())));
-            cl.setManagerNums(Integer.valueOf(StrUtil.trim(td.$eval("td:nth-child(8) > a","v => v.textContent", new ArrayList()).toString())));
-            cl.setManagerUrl(StrUtil.trim(td.$eval("td:nth-child(8) > a","v => v.attributes['href'].nodeValue", new ArrayList()).toString()));
+            cl.setCompanyFundSum(Integer.valueOf(StrUtil.trim(td.$eval("td:nth-child(7) > a","v => v.textContent", new ArrayList()).toString())));
+            cl.setCompanyManagerSum(Integer.valueOf(StrUtil.trim(td.$eval("td:nth-child(8) > a","v => v.textContent", new ArrayList()).toString())));
+            cl.setCompanyManagerUrl(StrUtil.trim(td.$eval("td:nth-child(8) > a","v => v.attributes['href'].nodeValue", new ArrayList()).toString()));
             cl.setCrawlDateTime(new Date());
             log.info("Message<crawlCompanyList> = {}", cl);
             streamBridge.send(PRODUCE_COMPANY_LIST, cl);

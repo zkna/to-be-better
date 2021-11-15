@@ -2,7 +2,7 @@ package com.gyx.datahandler.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.gyx.entity.fund.eastmoney.EastmoneyCompanyListTO;
+import com.gyx.entity.fund.eastmoney.EastmoneyCompanyTO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,7 +14,7 @@ import java.util.Date;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class TEastmoneyCompanyListTO extends EastmoneyCompanyListTO {
+public class TEastmoneyCompanyTO extends EastmoneyCompanyTO {
 
     @ApiModelProperty(value = "主键id")
     @TableId(type = IdType.AUTO,value = "id")

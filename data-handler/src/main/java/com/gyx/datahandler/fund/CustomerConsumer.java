@@ -3,26 +3,20 @@ package com.gyx.datahandler.fund;
 import cn.hutool.extra.cglib.CglibUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.core.enums.SqlMethod;
-import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
-import com.gyx.datahandler.entity.TCompanyList;
-import com.gyx.datahandler.entity.TCompanyOverview;
+import com.gyx.datahandler.entity.TEastmoneyCompanyTO;
+import com.gyx.datahandler.entity.TEastmoneyFundOverviewTO;
 import com.gyx.datahandler.entity.TFundArchives;
-import com.gyx.datahandler.entity.TFundList;
+import com.gyx.datahandler.entity.TEastmoneyFundTO;
 import com.gyx.datahandler.service.ITCompanyListService;
 import com.gyx.datahandler.service.ITCompanyOverviewService;
 import com.gyx.datahandler.service.ITFundArchivesService;
 import com.gyx.datahandler.service.ITFundListService;
-import com.gyx.entity.fund.CompanyList;
-import com.gyx.entity.fund.CompanyOverview;
+import com.gyx.entity.fund.eastmoney.EastmoneyCompanyTO;
+import com.gyx.entity.fund.eastmoney.EastmoneyFundOverviewTO;
 import com.gyx.entity.fund.FundArchives;
-import com.gyx.entity.fund.FundList;
+import com.gyx.entity.fund.eastmoney.EastmoneyFundTO;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -54,9 +48,9 @@ public class CustomerConsumer {
     ITFundArchivesService itFundArchivesService;
 
     @Bean
-    public Consumer<CompanyOverview> receiveCompanyOverview() {
+    public Consumer<EastmoneyFundOverviewTO> receiveCompanyOverview() {
         return co -> {
-            TCompanyOverview tco = new TCompanyOverview();
+            TEastmoneyFundOverviewTO tco = new TEastmoneyFundOverviewTO();
             CglibUtil.copy(co, tco);
             tco.setCreateDateTime(new Date());
             log.info("CustomerConsumer.CompanyOverview={}", JSON.toJSONString(tco));
@@ -65,26 +59,26 @@ public class CustomerConsumer {
     }
 
     @Bean
-    public Consumer<CompanyList> receiveCompanyList() {
+    public Consumer<EastmoneyCompanyTO> receiveCompanyList() {
         return cl -> {
-            TCompanyList tcl = new TCompanyList();
+            TEastmoneyCompanyTO tcl = new TEastmoneyCompanyTO();
             CglibUtil.copy(cl,tcl);
             tcl.setCreateDateTime(new Date());
             log.info("CustomerConsumer.CompanyList={}", JSON.toJSONString(tcl));
-            QueryWrapper<TCompanyList> tcluw = new QueryWrapper<>();
+            QueryWrapper<TEastmoneyCompanyTO> tcluw = new QueryWrapper<>();
             tcluw.eq("company_id",tcl.getCompanyId());
             itCompanyListService.saveOrUpdate(tcl,tcluw);
         };
     }
 
     @Bean
-    public Consumer<FundList> receiveFundList() {
+    public Consumer<EastmoneyFundTO> receiveFundList() {
         return fl -> {
-            TFundList tfl = new TFundList();
+            TEastmoneyFundTO tfl = new TEastmoneyFundTO();
             CglibUtil.copy(fl ,tfl);
             tfl.setCreateDateTime(new Date());
             log.info("CustomerConsumer.FundList={}", JSON.toJSONString(tfl));
-            QueryWrapper<TFundList> tfluw = new QueryWrapper<>();
+            QueryWrapper<TEastmoneyFundTO> tfluw = new QueryWrapper<>();
             tfluw.eq("fund_code",tfl.getFundCode());
             itFundListService.saveOrUpdate(tfl,tfluw);
         };
